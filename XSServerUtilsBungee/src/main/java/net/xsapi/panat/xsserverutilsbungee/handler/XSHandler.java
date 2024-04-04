@@ -1,0 +1,43 @@
+package net.xsapi.panat.xsserverutilsbungee.handler;
+
+import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
+import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public class XSHandler {
+
+    private static HashMap<String, XSBanplayers> banlist = new HashMap<>();
+    private static HashMap<String, XSMuteplayers> mutelist = new HashMap<>();
+
+    public static HashMap<String, XSBanplayers> getBanList() {
+        return banlist;
+    }
+    public static HashMap<String, XSMuteplayers> getMuteList() {
+        return mutelist;
+    }
+    public static String getSubChannel() {
+        return "xsserverutils:channel_bungeecord";
+    }
+
+    public static void checkDeleteFromDatabase() {
+        for(Map.Entry<String,XSBanplayers> ban : banlist.entrySet()) {
+
+            if(new Date().getTime()- ban.getValue().getEnd_date() >= 0 && ban.getValue().getEnd_date() != -1) { //time out
+                XSDatabaseHandler.deleteFromDatabase(ban.getValue().getIdRef());
+            }
+
+        }
+    }
+
+    private static void subChannel() {
+        XSRedisHandler.subscribeToChannelAsync(getSubChannel());
+    }
+
+    public static void initSystem() {
+        XSRedisHandler.redisConnection();
+        subChannel();
+    }
+}

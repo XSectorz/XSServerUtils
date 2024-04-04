@@ -1,0 +1,18 @@
+
+#postgres
+database:
+  host: localhost
+  port: 3306
+  dbName: xsutils
+  user: admin
+  password: 1234
+
+redis:
+  host: localhost
+  port: 6379
+  password: ''
+
+configuration:
+  serverList:
+    group-01:
+      - lobby/01

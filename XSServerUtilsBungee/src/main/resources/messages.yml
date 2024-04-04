@@ -1,0 +1,17 @@
+
+prefix: "<color:#FFE300><bold>XSUtils</bold> <dark_gray>▸ <white>"
+no_permission: "%prefix%<color:#C01631>คุณไม่มีสิทธิในการกระทำดังกล่าว"
+banned_success: "%prefix%<white>ทำการแบนผู้เล่น <color:#C01631>%player_name% <white>เรียบร้อยแล้ว"
+banned_already: "%prefix%<white>ผู้เล่น <color:#C01631>%player_name% <white>ได้ถูกแบนออกจากระบบเรียบร้อยอยู่แล้ว"
+banned_default_reason: "<white>เนื่องจากคุณทำผิดกฏของเซิฟเวอร์"
+banned_forever: "<white>ถาวร"
+unban_fail: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวยังไม่ถูกแบนจากระบบ"
+unban_success: "%prefix%<white>ทำการปลดแบนผู้เล่น <color:#26D900>%player_name% <white>เรียบร้อยแล้ว"
+player_does_not_exists: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวไม่พบอยู่ในระบบ"
+mute_already: "%prefix%<white>ผู้เล่น <color:#C01631>%player_name% <white>ได้ถูกปิดปากอยู่แล้ว"
+kicked_annouce:
+  - "<red>คุณถูกแบนเป็นเวลา <white>%timer% <red>ออกจากเซิฟเวอร์นี้!"
+  - ""
+  - "<gray>สาเหตุ: <white>%reason%"
+  - ""
+  - "<gray>ติดต่อสอบถามข้อมูลเพิ่มเติม: <aqua>fb.me/Siamcraft.net"

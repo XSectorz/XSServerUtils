@@ -1,0 +1,4 @@
+name: XSServerUtilsClient
+version: '${project.version}'
+main: net.xsapi.panat.xsserverutilsclient.core
+api-version: '1.20'

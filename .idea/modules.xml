@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/XSServerUtils.iml" filepath="$PROJECT_DIR$/.idea/XSServerUtils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/XSServerUtilsBungee/XSServerUtilsBungee.iml" filepath="$PROJECT_DIR$/XSServerUtilsBungee/XSServerUtilsBungee.iml" />
+      <module fileurl="file://$PROJECT_DIR$/XSServerUtilsClient/XSServerUtilsClient.iml" filepath="$PROJECT_DIR$/XSServerUtilsClient/XSServerUtilsClient.iml" />
+    </modules>
+  </component>
+</project>
