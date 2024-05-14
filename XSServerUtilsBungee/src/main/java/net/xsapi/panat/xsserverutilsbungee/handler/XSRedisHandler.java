@@ -1,5 +1,6 @@
 package net.xsapi.panat.xsserverutilsbungee.handler;
 
+import com.google.gson.Gson;
 import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
 import redis.clients.jedis.Jedis;
@@ -57,12 +58,20 @@ public class XSRedisHandler {
                     @Override
                     public void onMessage(String channel, String message) {
                         if (Thread.currentThread().isInterrupted()) {
-                            core.getPlugin().getLogger().info("XSServerUtils Threads : Is interrupt");
+                           // core.getPlugin().getLogger().info("XSServerUtils Threads : Is interrupt");
                             return;
                         }
 
                         if(channel.equalsIgnoreCase(XSHandler.getSubChannel())) {
-                            core.getPlugin().getLogger().info("GET ACK " + message);
+                           // core.getPlugin().getLogger().info("Req data received");
+                            String args = message.split("<SPLIT>")[0];
+                            if(args.equalsIgnoreCase("REQUEST_DATA")) {
+                                String server = message.split("<SPLIT>")[1];
+                              //  core.getPlugin().getLogger().info("sub " + getClientPrefix()+server);
+                                Gson gson = new Gson();
+                                String muteJson = gson.toJson(XSHandler.getMuteList());
+                                sendRedisMessage(getClientPrefix()+server,"REQUEST_DATA_ACK<SPLIT>"+muteJson);
+                            }
                         }
                     }
                 };

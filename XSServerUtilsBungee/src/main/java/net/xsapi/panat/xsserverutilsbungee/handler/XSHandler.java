@@ -18,17 +18,21 @@ public class XSHandler {
     public static HashMap<String, XSMuteplayers> getMuteList() {
         return mutelist;
     }
+
     public static String getSubChannel() {
         return "xsserverutils:channel_bungeecord";
     }
 
     public static void checkDeleteFromDatabase() {
         for(Map.Entry<String,XSBanplayers> ban : banlist.entrySet()) {
-
             if(new Date().getTime()- ban.getValue().getEnd_date() >= 0 && ban.getValue().getEnd_date() != -1) { //time out
-                XSDatabaseHandler.deleteFromDatabase(ban.getValue().getIdRef());
+                XSDatabaseHandler.deleteBanPlayerFromDatabase(ban.getValue().getIdRef());
             }
-
+        }
+        for(Map.Entry<String,XSMuteplayers> mute : mutelist.entrySet()) {
+            if(new Date().getTime()- mute.getValue().getEnd_date() >= 0 && mute.getValue().getEnd_date() != -1) { //time out
+                XSDatabaseHandler.deleteMutePlayerFromDatabase(mute.getValue().getIdRef());
+            }
         }
     }
 

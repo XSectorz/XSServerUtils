@@ -1,12 +1,17 @@
 package net.xsapi.panat.xsserverutilsclient.handler;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.xsapi.panat.xsserverutilsclient.config.mainConfig;
 import net.xsapi.panat.xsserverutilsclient.core;
+import net.xsapi.panat.xsserverutilsclient.objects.XSMuteplayers;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class XSRedisHandler {
 
@@ -57,13 +62,35 @@ public class XSRedisHandler {
                     @Override
                     public void onMessage(String channel, String message) {
                         if (Thread.currentThread().isInterrupted()) {
-                            core.getPlugin().getLogger().info("XSServerUtils Threads : Is interrupt");
+                            //core.getPlugin().getLogger().info("XSServerUtils Threads : Is interrupt");
                             return;
                         }
 
                         if(channel.equalsIgnoreCase(XSHandler.getSubChannel())) {
-                            Bukkit.broadcastMessage("GET " + message);
-                            XSRedisHandler.sendRedisMessage(XSRedisHandler.getHostPrefix(),"test ack");
+
+                            String args = message.split("<SPLIT>")[0];
+                           // Bukkit.broadcastMessage("GET " + message);
+                            if(args.equalsIgnoreCase("MUTE")) {
+                                String muteObject = message.split("<SPLIT>")[1];
+                                String target = message.split("<SPLIT>")[2];
+                                Gson gson = new Gson();
+                                XSMuteplayers xsMuteplayers = gson.fromJson(muteObject, XSMuteplayers.class);
+                                XSHandler.getMuteList().put(target,xsMuteplayers);
+                               // Bukkit.broadcastMessage("MUTE " + target);
+                            } else if(args.equalsIgnoreCase("REQUEST_DATA_ACK")) {
+
+                                String data = message.split("<SPLIT>")[1];
+                                Gson gson = new Gson();
+                                Type type = new TypeToken<HashMap<String, XSMuteplayers>>(){}.getType();
+                                HashMap<String, XSMuteplayers> mutelistFromJson = gson.fromJson(data, type);
+                                XSHandler.setMutelist(mutelistFromJson);
+                                //Bukkit.broadcastMessage("Load data " + mutelistFromJson);
+                            } else if(args.equalsIgnoreCase("UN_MUTE")) {
+                                String player = message.split("<SPLIT>")[1];
+                                XSHandler.getMuteList().remove(player);
+
+                            }
+                            //XSRedisHandler.sendRedisMessage(XSRedisHandler.getHostPrefix(),"test ack");
                         }
                     }
                 };

@@ -35,6 +35,7 @@ public final class core extends Plugin {
         }
         XSDatabaseHandler.createSQLDatabase();
         XSDatabaseHandler.loadBanList();
+        XSDatabaseHandler.loadMuteList();
         new commandsLoader();
         new eventLoader();
         XSHandler.initSystem();

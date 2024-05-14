@@ -9,6 +9,7 @@ public class commandsLoader {
         ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_ban());
         ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_unban());
         ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_mute());
+        ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_unmute());
     }
 
 }

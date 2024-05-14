@@ -4,6 +4,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
+import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
 
 import java.sql.*;
 
@@ -16,6 +17,7 @@ public class XSDatabaseHandler {
     private static String PASS;
     private static String DB_NAME;
     private static String BAN_TABLE = "xsutils_data_ban";
+    private static String MUTE_TABLE = "xsutils_data_mute";
     private static String MAIN_TABLE = "xsutils_users";
 
     public static String getBantable() {
@@ -23,6 +25,9 @@ public class XSDatabaseHandler {
     }
     public static String getMainTable() { return MAIN_TABLE; }
 
+    public static String getMuteTable() {
+        return MUTE_TABLE;
+    }
 
     private final static String BAN_SQL_QUERY = " ("
             + "id SERIAL PRIMARY KEY, "
@@ -31,6 +36,15 @@ public class XSDatabaseHandler {
             + "creation_date DOUBLE PRECISION, "
             + "end_date DOUBLE PRECISION, "
             + "banner TEXT"
+            + ")";
+
+    private final static String MUTE_SQL_QUERY = " ("
+            + "id SERIAL PRIMARY KEY, "
+            + "idRef INTEGER REFERENCES " + getMainTable() + "(id), "
+            + "reason TEXT, "
+            + "creation_date DOUBLE PRECISION, "
+            + "end_date DOUBLE PRECISION, "
+            + "muter TEXT"
             + ")";
 
     private final static String MAIN_SQL_QUERY = " ("
@@ -42,7 +56,15 @@ public class XSDatabaseHandler {
 
     public static void loadBanList() {
         try (Connection connection = establishConnection()) {
-            queryFromDatabase(connection,getBantable());
+            queryBanFromDatabase(connection,getBantable());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadMuteList() {
+        try (Connection connection = establishConnection()) {
+            queryMuteFromDatabase(connection,getMuteTable());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -118,7 +140,23 @@ public class XSDatabaseHandler {
         }
     }
 
-    public static void deleteFromDatabase(int idRef)  {
+    public static void insertIntoDatabaseMute(int idRef,String reason,double creation_date,double end_date,String muter)  {
+        String insetrQuery = "INSERT INTO " + getMuteTable() + " (idRef, reason, creation_date, end_date, muter) "
+                + "VALUES(?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = establishConnection().prepareStatement(insetrQuery)) {
+            preparedStatement.setInt(1, idRef);
+            preparedStatement.setString(2, reason);
+            preparedStatement.setDouble(3, creation_date);
+            preparedStatement.setDouble(4, end_date);
+            preparedStatement.setString(5, muter);
+
+            preparedStatement.executeUpdate();
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteBanPlayerFromDatabase(int idRef)  {
         String deleteQuery = "DELETE FROM " + getBantable() + " WHERE idRef = ?";
         try (PreparedStatement preparedStatement = establishConnection().prepareStatement(deleteQuery)) {
             preparedStatement.setInt(1, idRef);
@@ -128,8 +166,17 @@ public class XSDatabaseHandler {
         }
     }
 
+    public static void deleteMutePlayerFromDatabase(int idRef)  {
+        String deleteQuery = "DELETE FROM " + getMuteTable() + " WHERE idRef = ?";
+        try (PreparedStatement preparedStatement = establishConnection().prepareStatement(deleteQuery)) {
+            preparedStatement.setInt(1, idRef);
+            preparedStatement.executeUpdate();
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public static void queryFromDatabase(Connection connection, String table) throws SQLException {
+    public static void queryBanFromDatabase(Connection connection, String table) throws SQLException {
         String selectQuery = "SELECT * FROM " + table;
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -151,8 +198,30 @@ public class XSDatabaseHandler {
         }
     }
 
+    public static void queryMuteFromDatabase(Connection connection, String table) throws SQLException {
+        String selectQuery = "SELECT * FROM " + table;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int idRef = resultSet.getInt("idRef");
+                String reason = resultSet.getString("reason");
+                double creation_date = resultSet.getDouble("creation_date");
+                double end_date = resultSet.getDouble("end_date");
+                String muter = resultSet.getString("muter");
+
+                String result = queryGetName(connection,getMainTable(),idRef);
+                String uuid = result.split(":")[0];
+                String name = result.split(":")[1];
+                XSMuteplayers xsMuteplayers = new XSMuteplayers(uuid,idRef,reason,creation_date,end_date,muter);
+
+                XSHandler.getMuteList().put(name,xsMuteplayers);
+            }
+        }
+    }
+
     public static String queryGetName(Connection connection, String table, int idRef) throws SQLException {
-        String selectQuery = "SELECT username FROM " + table + " WHERE id = ?";
+        String selectQuery = "SELECT username, uuid FROM " + table + " WHERE id = ?";
         String result = "";
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             preparedStatement.setInt(1, idRef);
@@ -201,6 +270,7 @@ public class XSDatabaseHandler {
     public static void createSQLDatabase() {
         sqlConnection(getMainTable(), MAIN_SQL_QUERY);
         sqlConnection(getBantable(), BAN_SQL_QUERY);
+        sqlConnection(getMuteTable(), MUTE_SQL_QUERY);
     }
 
 }

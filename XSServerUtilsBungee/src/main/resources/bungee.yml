@@ -8,3 +8,5 @@ commands:
     description: Ultimate unban system
   xsmute:
     description: Ultimate mute system
+  xsunmute:
+    description: Ultimate unmute system
