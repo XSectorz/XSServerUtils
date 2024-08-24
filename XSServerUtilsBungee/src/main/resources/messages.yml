@@ -19,3 +19,9 @@ kicked_annouce:
   - "<gray>สาเหตุ: <white>%reason%"
   - ""
   - "<gray>ติดต่อสอบถามข้อมูลเพิ่มเติม: <aqua>fb.me/Siamcraft.net"
+scp_annouce:
+  - "<red>คุณไม่สามารถเข้าร่วมเซิฟเวอร์ได้"
+  - ""
+  - "<gray>สาเหตุ: <white>คุณยังไม่เข้าสู่ระบบ Siamcraft Protector"
+  - ""
+  - "<gray>ติดต่อสอบถามข้อมูลเพิ่มเติม: <aqua>fb.me/Siamcraft.net"

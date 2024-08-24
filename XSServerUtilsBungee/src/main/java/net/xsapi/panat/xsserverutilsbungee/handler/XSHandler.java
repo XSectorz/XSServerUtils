@@ -2,6 +2,7 @@ package net.xsapi.panat.xsserverutilsbungee.handler;
 
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
+import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,11 +13,16 @@ public class XSHandler {
     private static HashMap<String, XSBanplayers> banlist = new HashMap<>();
     private static HashMap<String, XSMuteplayers> mutelist = new HashMap<>();
 
+    private static HashMap<String, scpUsers> scpUsers = new HashMap<>();
+
     public static HashMap<String, XSBanplayers> getBanList() {
         return banlist;
     }
     public static HashMap<String, XSMuteplayers> getMuteList() {
         return mutelist;
+    }
+    public static HashMap<String, scpUsers> getScpUsers() {
+        return scpUsers;
     }
 
     public static String getSubChannel() {

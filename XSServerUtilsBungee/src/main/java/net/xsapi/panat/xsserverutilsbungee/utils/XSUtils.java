@@ -41,6 +41,16 @@ public class XSUtils {
         }
     }
 
+    public static String sentKickSCP() {
+        String kicedMSG = "";
+        for(String s : messagesConfig.getConfig().getStringList("scp_annouce")) {
+
+            String replaceStr = XSUtils.decodeText(s);
+            kicedMSG += replaceStr + "\n";
+        }
+        return kicedMSG;
+    }
+
     public static String sentKickedAnnouce(XSBanplayers xsBanplayers) {
         String kicedMSG = "";
         for(String s : messagesConfig.getConfig().getStringList("kicked_annouce")) {

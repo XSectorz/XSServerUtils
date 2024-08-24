@@ -5,6 +5,7 @@ import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
+import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 
 import java.sql.*;
 
@@ -19,11 +20,14 @@ public class XSDatabaseHandler {
     private static String BAN_TABLE = "xsutils_data_ban";
     private static String MUTE_TABLE = "xsutils_data_mute";
     private static String MAIN_TABLE = "xsutils_users";
+    private static String SCP_USER_TABLE = "xsutils_scp_users";
 
     public static String getBantable() {
         return BAN_TABLE;
     }
     public static String getMainTable() { return MAIN_TABLE; }
+
+    public static String getScpUserTable() { return  SCP_USER_TABLE; }
 
     public static String getMuteTable() {
         return MUTE_TABLE;
@@ -53,6 +57,14 @@ public class XSDatabaseHandler {
             + "username VARCHAR(16), "
             + "warnPoints INTEGER"
             + ")";
+
+    public static void loadSCPUsers() {
+        try (Connection connection = establishConnection()) {
+            querySCPUsers(connection,getScpUserTable());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void loadBanList() {
         try (Connection connection = establishConnection()) {
@@ -123,6 +135,32 @@ public class XSDatabaseHandler {
         return result;
     }
 
+    public static void updateSCPUsersLogout(String username,long onlinetime,String server)  {
+
+        String updateQuery = "UPDATE " + getScpUserTable() + " SET online_time = ?, server = ? WHERE username = ?";
+        try (PreparedStatement preparedStatement = establishConnection().prepareStatement(updateQuery)) {
+            preparedStatement.setLong(1, onlinetime);
+            preparedStatement.setString(2, server);
+            preparedStatement.setString(3, username);
+
+            preparedStatement.executeUpdate();
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateSecretSCPUsers(String username,String secret)  {
+        String updateQuery = "UPDATE " + getScpUserTable() + " SET secret = ? WHERE username = ?";
+        try (PreparedStatement preparedStatement = establishConnection().prepareStatement(updateQuery)) {
+            preparedStatement.setString(1, secret);
+            preparedStatement.setString(2, username);
+
+            preparedStatement.executeUpdate();
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void insertIntoDatabaseBan(int idRef,String reason,double creation_date,double end_date,String banner)  {
         String insetrQuery = "INSERT INTO " + getBantable() + " (idRef, reason, creation_date, end_date, banner) "
@@ -173,6 +211,26 @@ public class XSDatabaseHandler {
             preparedStatement.executeUpdate();
         }  catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void querySCPUsers(Connection connection, String table) throws SQLException {
+        String selectQuery = "SELECT * FROM " + table;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String username = resultSet.getString("username");
+                String server = resultSet.getString("server");
+                long onlineTime = resultSet.getLong("online_time");
+                String rank = resultSet.getString("rank");
+
+                scpUsers scpUser = new scpUsers(username,server,onlineTime,rank);
+
+                core.getPlugin().getLogger().info("[SCP] Added " + username + " from database ");
+
+                XSHandler.getScpUsers().put(username,scpUser);
+            }
         }
     }
 

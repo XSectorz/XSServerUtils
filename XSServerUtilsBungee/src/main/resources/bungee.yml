@@ -10,3 +10,5 @@ commands:
     description: Ultimate mute system
   xsunmute:
     description: Ultimate unmute system
+  xsgbc:
+    description: Ultimate broadcast system

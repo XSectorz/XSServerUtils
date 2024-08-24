@@ -7,8 +7,10 @@ import net.xsapi.panat.xsserverutilsbungee.handler.XSDatabaseHandler;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSRedisHandler;
 import net.xsapi.panat.xsserverutilsbungee.listeners.eventLoader;
+import net.xsapi.panat.xsserverutilsbungee.websocket.scpWebSocket;
 
 import java.io.IOException;
+import java.net.URI;
 
 public final class core extends Plugin {
 
@@ -16,6 +18,13 @@ public final class core extends Plugin {
     public static core getPlugin() {
         return plugin;
     }
+
+    private static scpWebSocket scpWebSocket;
+
+    public static scpWebSocket getSCPWebSocket() {
+        return scpWebSocket;
+    }
+
 
     @Override
     public void onEnable() {
@@ -36,9 +45,18 @@ public final class core extends Plugin {
         XSDatabaseHandler.createSQLDatabase();
         XSDatabaseHandler.loadBanList();
         XSDatabaseHandler.loadMuteList();
+        XSDatabaseHandler.loadSCPUsers();
         new commandsLoader();
         new eventLoader();
         XSHandler.initSystem();
+
+        try {
+            URI uri = new URI("ws://localhost:8000?client=xsserverutils_bungeecord");
+            scpWebSocket = new scpWebSocket(uri);
+            scpWebSocket.connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -49,6 +67,10 @@ public final class core extends Plugin {
             XSHandler.checkDeleteFromDatabase();
         } catch (Exception e) {
             this.getLogger().info("Cant check ban caught some error");
+        }
+
+        if (scpWebSocket != null && scpWebSocket.isOpen()) {
+            scpWebSocket.close();
         }
 
         XSRedisHandler.destroyThreads();
