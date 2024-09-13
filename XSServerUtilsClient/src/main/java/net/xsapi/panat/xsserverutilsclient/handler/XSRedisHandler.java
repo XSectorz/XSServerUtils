@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import net.xsapi.panat.xsserverutilsclient.config.mainConfig;
 import net.xsapi.panat.xsserverutilsclient.core;
 import net.xsapi.panat.xsserverutilsclient.objects.XSMuteplayers;
+import net.xsapi.panat.xsserverutilsclient.scp.scpUsers;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
@@ -12,6 +13,7 @@ import redis.clients.jedis.JedisPubSub;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class XSRedisHandler {
 
@@ -88,6 +90,19 @@ public class XSRedisHandler {
                             } else if(args.equalsIgnoreCase("UN_MUTE")) {
                                 String player = message.split("<SPLIT>")[1];
                                 XSHandler.getMuteList().remove(player);
+
+                            } else if(args.equalsIgnoreCase("UPDATE_SCP_USER")) {
+                                String data = message.split("<SPLIT>")[1];
+                                Gson gson = new Gson();
+
+                                Type type = new TypeToken<HashMap<String, scpUsers>>(){}.getType();
+                                HashMap<String, scpUsers> scpUserData = gson.fromJson(data, type);
+
+                                XSHandler.setSCPUser(scpUserData);
+
+                                for(Map.Entry<String,scpUsers> dataSCP : XSHandler.getScpUsers().entrySet()) {
+                                    Bukkit.getLogger().info("SCP User " + dataSCP.getKey());
+                                }
 
                             }
                             //XSRedisHandler.sendRedisMessage(XSRedisHandler.getHostPrefix(),"test ack");

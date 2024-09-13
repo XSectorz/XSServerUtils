@@ -7,6 +7,7 @@ public class configLoader {
     public configLoader() throws IOException {
         new mainConfig();
         new messagesConfig();
+        new botConfig();
     }
 
 }

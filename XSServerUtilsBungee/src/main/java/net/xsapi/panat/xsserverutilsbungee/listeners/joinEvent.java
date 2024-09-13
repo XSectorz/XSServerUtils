@@ -6,6 +6,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
@@ -36,7 +37,8 @@ public class joinEvent implements Listener {
             ServerInfo target = ProxyServer.getInstance().getServerInfo(scpUsers.getServer());
 
             if(target != null) {
-                p.connect(target);
+                //core.getPlugin().getLogger().info("sent..... to " + target);
+                //p.connect(target);
             }
         }
 

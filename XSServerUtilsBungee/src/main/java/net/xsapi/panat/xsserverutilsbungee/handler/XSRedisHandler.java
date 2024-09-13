@@ -71,6 +71,9 @@ public class XSRedisHandler {
                                 Gson gson = new Gson();
                                 String muteJson = gson.toJson(XSHandler.getMuteList());
                                 sendRedisMessage(getClientPrefix()+server,"REQUEST_DATA_ACK<SPLIT>"+muteJson);
+
+                                String scpJSON = gson.toJson(XSHandler.getScpUsers());
+                                sendRedisMessage(XSRedisHandler.getClientPrefix() + server,"UPDATE_SCP_USER<SPLIT>" + scpJSON);
                             }
                         }
                     }

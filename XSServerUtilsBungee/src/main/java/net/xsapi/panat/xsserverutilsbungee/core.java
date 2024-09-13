@@ -1,5 +1,7 @@
 package net.xsapi.panat.xsserverutilsbungee;
 
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.xsapi.panat.xsserverutilsbungee.commands.commandsLoader;
 import net.xsapi.panat.xsserverutilsbungee.config.configLoader;
@@ -8,6 +10,8 @@ import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSRedisHandler;
 import net.xsapi.panat.xsserverutilsbungee.listeners.eventLoader;
 import net.xsapi.panat.xsserverutilsbungee.websocket.scpWebSocket;
+//import xyz.kyngs.librelogin.api.LibreLoginPlugin;
+//import xyz.kyngs.librelogin.api.provider.LibreLoginProvider;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,11 +29,29 @@ public final class core extends Plugin {
         return scpWebSocket;
     }
 
+    /*private static LibreLoginPlugin<ProxiedPlayer, ServerInfo> apiLibre;
+
+    public static LibreLoginPlugin<ProxiedPlayer, ServerInfo> getLibreAPI() {
+        return apiLibre;
+    }*/
 
     @Override
     public void onEnable() {
 
         plugin = this;
+       /* apiLibre = ((LibreLoginProvider<ProxiedPlayer, ServerInfo>) getProxy().getPluginManager().getPlugin("LibreLogin")).getLibreLogin();
+
+        apiLibre.getEventProvider().subscribe(apiLibre.getEventTypes().authenticated, (e) -> {
+            core.getPlugin().getLogger().info("Player "  + e.getPlayer());
+            core.getPlugin().getLogger().info("Reason "  + e.getReason());
+            ProxiedPlayer p = e.getPlayer();
+
+            if(XSHandler.getBotData().containsKey(p.getName())) {
+                ServerInfo serverInfo = core.getPlugin().getProxy().getServerInfo(XSHandler.getBotData().get(p.getName()));
+                p.connect(serverInfo);
+            }
+
+        });*/
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -49,7 +71,6 @@ public final class core extends Plugin {
         new commandsLoader();
         new eventLoader();
         XSHandler.initSystem();
-
         try {
             URI uri = new URI("ws://localhost:8000?client=xsserverutils_bungeecord");
             scpWebSocket = new scpWebSocket(uri);

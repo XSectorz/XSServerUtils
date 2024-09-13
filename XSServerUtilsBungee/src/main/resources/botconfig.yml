@@ -1,0 +1,10 @@
+
+
+bot_configuration:
+  botSurSet:
+    names:
+      - NotBotV2
+      - ImInSur
+      - TestBotting
+      - MyBot
+    target_servers: SurvivalBot/01

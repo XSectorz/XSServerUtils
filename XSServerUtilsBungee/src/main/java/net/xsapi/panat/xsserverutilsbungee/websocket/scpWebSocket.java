@@ -1,10 +1,13 @@
 package net.xsapi.panat.xsserverutilsbungee.websocket;
 
+import com.google.gson.Gson;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSDatabaseHandler;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
+import net.xsapi.panat.xsserverutilsbungee.handler.XSRedisHandler;
 import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 import net.xsapi.panat.xsserverutilsbungee.utils.XSUtils;
 import org.java_websocket.client.WebSocketClient;
@@ -61,6 +64,7 @@ public class scpWebSocket extends WebSocketClient {
                 String group = message.split("<SPLIT>")[2];
                 core.getPlugin().getLogger().info("[SCP] Added user " + clientName + "!");
                 XSHandler.getScpUsers().put(clientName,new scpUsers(clientName,"pre-auth",0,group));
+                XSHandler.updateSCPUser();
             } else {
                 core.getPlugin().getLogger().info("[SCP] user " + clientName + " already exists");
             }

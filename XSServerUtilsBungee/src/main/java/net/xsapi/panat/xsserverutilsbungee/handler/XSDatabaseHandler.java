@@ -232,6 +232,8 @@ public class XSDatabaseHandler {
                 XSHandler.getScpUsers().put(username,scpUser);
             }
         }
+
+        XSHandler.updateSCPUser();
     }
 
     public static void queryBanFromDatabase(Connection connection, String table) throws SQLException {

@@ -1,6 +1,8 @@
 name: XSServerUtilsBungee
 version: '${project.version}'
 main: net.xsapi.panat.xsserverutilsbungee.core
+#depends:
+#  - LibreLogin
 commands:
   xsban:
     description: Ultimate ban system

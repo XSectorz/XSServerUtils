@@ -63,6 +63,11 @@
             <id>PostgresSQL</id>
             <url> https://mvnrepository.com/artifact/postgresql/postgresq</url>
         </repository>
+        <repository>
+            <id>kyngs-repo-public</id>
+            <name>Repository</name>
+            <url>https://repo.kyngs.xyz/public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -107,6 +112,12 @@
             <groupId>org.java-websocket</groupId>
             <artifactId>Java-WebSocket</artifactId>
             <version>1.5.7</version>
+        </dependency>
+        <dependency>
+            <groupId>xyz.kyngs.librelogin</groupId>
+            <artifactId>API</artifactId>
+            <version>0.23.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
