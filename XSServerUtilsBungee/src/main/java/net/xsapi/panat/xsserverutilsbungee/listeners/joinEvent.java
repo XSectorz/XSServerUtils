@@ -31,9 +31,22 @@ public class joinEvent implements Listener {
         if(XSHandler.getScpUsers().containsKey(p.getName())) {
             scpUsers scpUsers = XSHandler.getScpUsers().get(p.getName());
 
+            core.getPlugin().getLogger().info("CONTAIN " + p.getName());
+
+            core.getPlugin().getLogger().info("IS ONLINE? " + scpUsers.isOnline());
             if(!scpUsers.isOnline()) {
-                p.disconnect(XSUtils.sentKickSCP());
+
+                if(XSHandler.getScpUserSessions().containsKey(p.getName())) {
+                    if(System.currentTimeMillis() - XSHandler.getScpUserSessions().get(p.getName()) > 3600000L) {
+                        p.disconnect(XSUtils.sentKickSCP());
+                        return;
+                    }
+                } else {
+                    p.disconnect(XSUtils.sentKickSCP());
+                }
+                scpUsers.setIsOnline(true);
             }
+
             ServerInfo target = ProxyServer.getInstance().getServerInfo(scpUsers.getServer());
 
             if(target != null) {

@@ -17,6 +17,9 @@ public class onLeave implements Listener {
         if(XSHandler.getScpUsers().containsKey(p.getName()) && p.getServer()!= null) {
             int timeDiff = (int) ((System.currentTimeMillis() -  XSHandler.getScpUsers().get(p.getName()).getCurrentTime())/1000);
 
+            XSHandler.getScpUserSessions().put(p.getName(),System.currentTimeMillis());
+            XSHandler.getScpUsers().get(p.getName()).setIsOnline(false);
+
             XSDatabaseHandler.updateSCPUsersLogout(p.getName(), XSHandler.getScpUsers().get(p.getName()).getOnlineTime()+timeDiff,
                     p.getServer().getInfo().getName());
         }

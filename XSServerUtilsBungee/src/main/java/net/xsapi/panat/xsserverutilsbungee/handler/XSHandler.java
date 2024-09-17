@@ -17,6 +17,8 @@ public class XSHandler {
     private static HashMap<String, XSMuteplayers> mutelist = new HashMap<>();
 
     private static HashMap<String, scpUsers> scpUsers = new HashMap<>();
+    public static HashMap<String, Long> scpUserSessions = new HashMap<>();
+
 
     public static HashMap<String, XSBanplayers> getBanList() {
         return banlist;
@@ -26,6 +28,9 @@ public class XSHandler {
     }
     public static HashMap<String, scpUsers> getScpUsers() {
         return scpUsers;
+    }
+    public static HashMap<String, Long> getScpUserSessions() {
+        return scpUserSessions;
     }
 
     private static HashMap<String,String> botData = new HashMap<>();
