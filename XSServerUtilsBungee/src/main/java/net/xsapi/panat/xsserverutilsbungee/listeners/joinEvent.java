@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.xsapi.panat.xsserverutilsbungee.core;
@@ -37,12 +38,15 @@ public class joinEvent implements Listener {
             if(!scpUsers.isOnline()) {
 
                 if(XSHandler.getScpUserSessions().containsKey(p.getName())) {
+                    core.getPlugin().getLogger().info("Has session");
                     if(System.currentTimeMillis() - XSHandler.getScpUserSessions().get(p.getName()) > 3600000L) {
                         p.disconnect(XSUtils.sentKickSCP());
                         return;
                     }
                 } else {
+                    core.getPlugin().getLogger().info("Not session");
                     p.disconnect(XSUtils.sentKickSCP());
+                    return;
                 }
                 scpUsers.setIsOnline(true);
             }
