@@ -1,5 +1,6 @@
 package net.xsapi.panat.xsserverutilsbungee;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -15,6 +16,7 @@ import xyz.kyngs.librelogin.api.provider.LibreLoginProvider;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 public final class core extends Plugin {
 
@@ -40,15 +42,20 @@ public final class core extends Plugin {
 
         plugin = this;
         apiLibre = ((LibreLoginProvider<ProxiedPlayer, ServerInfo>) getProxy().getPluginManager().getPlugin("LibreLogin")).getLibreLogin();
-
         apiLibre.getEventProvider().subscribe(apiLibre.getEventTypes().authenticated, (e) -> {
             //core.getPlugin().getLogger().info("Player "  + e.getPlayer());
             //core.getPlugin().getLogger().info("Reason "  + e.getReason());
             ProxiedPlayer p = e.getPlayer();
 
             if(XSHandler.getBotData().containsKey(p.getName())) {
-                ServerInfo serverInfo = core.getPlugin().getProxy().getServerInfo(XSHandler.getBotData().get(p.getName()));
-                p.connect(serverInfo);
+                ProxyServer.getInstance().getScheduler().schedule(this, new Runnable() {
+                    public void run() {
+                        if(p != null) {
+                            ServerInfo serverInfo = core.getPlugin().getProxy().getServerInfo(XSHandler.getBotData().get(p.getName()));
+                            p.connect(serverInfo);
+                        }
+                    }
+                }, 5, TimeUnit.SECONDS);
             }
 
         });

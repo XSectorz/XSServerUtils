@@ -18,6 +18,8 @@ public class checkTask {
                         if(!XSHandler.getScpUsers().containsKey(p.getName())) {
                             String kickMsg = "";
 
+                            Bukkit.getLogger().info("CHECK " + XSHandler.getScpUsers());
+
 
                             for(String s : messageConfig.getConfig().getStringList("SCPKicked")) {
                                 kickMsg += XSUtils.decodeText(s) + "\n";

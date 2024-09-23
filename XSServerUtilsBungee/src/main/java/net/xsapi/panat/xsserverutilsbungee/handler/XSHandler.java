@@ -5,6 +5,7 @@ import net.xsapi.panat.xsserverutilsbungee.config.botConfig;
 import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
+import net.xsapi.panat.xsserverutilsbungee.scp.scpSessions;
 import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 
 import java.util.Date;
@@ -17,7 +18,7 @@ public class XSHandler {
     private static HashMap<String, XSMuteplayers> mutelist = new HashMap<>();
 
     private static HashMap<String, scpUsers> scpUsers = new HashMap<>();
-    public static HashMap<String, Long> scpUserSessions = new HashMap<>();
+    public static HashMap<String, scpSessions> scpUserSessions = new HashMap<>();
 
 
     public static HashMap<String, XSBanplayers> getBanList() {
@@ -29,7 +30,7 @@ public class XSHandler {
     public static HashMap<String, scpUsers> getScpUsers() {
         return scpUsers;
     }
-    public static HashMap<String, Long> getScpUserSessions() {
+    public static HashMap<String, scpSessions> getScpUserSessions() {
         return scpUserSessions;
     }
 

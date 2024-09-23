@@ -10,6 +10,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
+import net.xsapi.panat.xsserverutilsbungee.scp.scpSessions;
 import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 import net.xsapi.panat.xsserverutilsbungee.utils.XSUtils;
 
@@ -35,11 +36,25 @@ public class joinEvent implements Listener {
             core.getPlugin().getLogger().info("CONTAIN " + p.getName());
 
             core.getPlugin().getLogger().info("IS ONLINE? " + scpUsers.isOnline());
+            core.getPlugin().getLogger().info(p.getAddress().getAddress().getHostAddress());
             if(!scpUsers.isOnline()) {
 
                 if(XSHandler.getScpUserSessions().containsKey(p.getName())) {
                     core.getPlugin().getLogger().info("Has session");
-                    if(System.currentTimeMillis() - XSHandler.getScpUserSessions().get(p.getName()) > 3600000L) {
+
+                    scpSessions scpSession =  XSHandler.getScpUserSessions().get(p.getName());
+
+                    String userAddr = p.getAddress().getAddress().getHostAddress();
+
+                    if(!userAddr.equalsIgnoreCase(scpSession.getIpAddr())) {
+                        core.getPlugin().getLogger().info("Ip not equal " + scpSession.getIpAddr() + " : " + userAddr + " remove session");
+                        XSHandler.getScpUserSessions().remove(p.getName());
+                        p.disconnect(XSUtils.sentKickSCP());
+                        return;
+                    }
+
+                    if(System.currentTimeMillis() - scpSession.getLogoutTime() > 3600000L) {
+                        core.getPlugin().getLogger().info("Session timeout");
                         p.disconnect(XSUtils.sentKickSCP());
                         return;
                     }
@@ -48,8 +63,10 @@ public class joinEvent implements Listener {
                     p.disconnect(XSUtils.sentKickSCP());
                     return;
                 }
-                scpUsers.setIsOnline(true);
+
             }
+            core.getPlugin().getLogger().info("Pass check!");
+            scpUsers.setIsOnline(true);
 
             ServerInfo target = ProxyServer.getInstance().getServerInfo(scpUsers.getServer());
 

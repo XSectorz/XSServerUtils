@@ -41,15 +41,21 @@ public class scpWebSocket extends WebSocketClient {
             scpUsers.setCurrentTime(System.currentTimeMillis());
         } else if(action.equalsIgnoreCase("DISCONNECTED")) {
             if(XSHandler.getScpUsers().containsKey(clientName)) {
-                XSHandler.getScpUsers().get(clientName).setIsOnline(false);
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(clientName);
+                core.getPlugin().getLogger().info("Disconnected via websocket " + clientName);
                 if(player != null) {
                     player.disconnect(XSUtils.sentKickSCP());
 
                     int timeDiff = (int) ((System.currentTimeMillis() -  XSHandler.getScpUsers().get(clientName).getCurrentTime())/1000);
 
+                    if(timeDiff > 200000) {
+                        return;
+                    }
+
                     XSDatabaseHandler.updateSCPUsersLogout(clientName, XSHandler.getScpUsers().get(clientName).getOnlineTime()+timeDiff,
                             player.getServer().getInfo().getName());
+                } else {
+                    XSHandler.getScpUsers().get(clientName).setIsOnline(false);
                 }
 
             }
