@@ -9,6 +9,7 @@ import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class XSUtils {
 
@@ -49,6 +50,13 @@ public class XSUtils {
             kicedMSG += replaceStr + "\n";
         }
         return kicedMSG;
+    }
+
+    public static String generateSixDigitCode() {
+        int randomNumber = ThreadLocalRandom.current().nextInt(0, 1000000);
+        String formattedNumber = String.format("%06d", randomNumber);
+
+        return formattedNumber;
     }
 
     public static String sentKickedAnnouce(XSBanplayers xsBanplayers) {

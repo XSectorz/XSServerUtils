@@ -87,5 +87,6 @@ public class XSHandler {
         XSRedisHandler.redisConnection();
         subChannel();
         loadBotData();
+        XSDatabaseHandler.loadVerifyUser();
     }
 }

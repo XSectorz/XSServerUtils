@@ -13,6 +13,7 @@ redis:
   password: ''
 
 lobby: Lobby-01
+discordToken: ""
 
 configuration:
   serverList:

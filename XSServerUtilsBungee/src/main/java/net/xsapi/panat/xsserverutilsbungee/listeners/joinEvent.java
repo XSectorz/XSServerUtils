@@ -30,7 +30,7 @@ public class joinEvent implements Listener {
             }
         }
 
-        if(XSHandler.getScpUsers().containsKey(p.getName())) {
+        if(XSHandler.getScpUsers().containsKey(p.getName()) && false) {
             scpUsers scpUsers = XSHandler.getScpUsers().get(p.getName());
 
             core.getPlugin().getLogger().info("CONTAIN " + p.getName());

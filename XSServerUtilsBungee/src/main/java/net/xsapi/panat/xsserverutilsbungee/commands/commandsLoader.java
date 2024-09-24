@@ -11,6 +11,7 @@ public class commandsLoader {
         ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_mute());
         ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_unmute());
         ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_hub());
+        ProxyServer.getInstance().getPluginManager().registerCommand(core.getPlugin(), new commands_verify());
     }
 
 }

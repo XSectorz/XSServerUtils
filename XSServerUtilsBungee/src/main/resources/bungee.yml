@@ -14,3 +14,5 @@ commands:
     description: Ultimate unmute system
   hub:
     description: Ultimate hub system
+  verify:
+    description: Ultimate discord verify system

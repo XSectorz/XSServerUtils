@@ -3,11 +3,14 @@ package net.xsapi.panat.xsserverutilsbungee.handler;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
+import net.xsapi.panat.xsserverutilsbungee.discord.verifyHandler;
+import net.xsapi.panat.xsserverutilsbungee.discord.verifyUser;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
 import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 
 import java.sql.*;
+import java.util.UUID;
 
 public class XSDatabaseHandler {
 
@@ -55,7 +58,9 @@ public class XSDatabaseHandler {
             + "id SERIAL PRIMARY KEY, "
             + "uuid TEXT, "
             + "username VARCHAR(16), "
-            + "warnPoints INTEGER"
+            + "warnPoints INTEGER, "
+            + "discordID TEXT, "
+            + "verifyDate DOUBLE PRECISION"
             + ")";
 
     public static void loadSCPUsers() {
@@ -82,6 +87,30 @@ public class XSDatabaseHandler {
         }
     }
 
+    public static void loadVerifyUser() {
+        Connection connection;
+        String checkPlayerQuery = "SELECT * FROM " + getMainTable() + " WHERE discordID IS NOT NULL AND discordID <> ''";
+        try {
+            connection = establishConnection();
+            PreparedStatement preparedCheckStatement = connection.prepareStatement(checkPlayerQuery);
+            ResultSet resultSet = preparedCheckStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String uuid = resultSet.getString("uuid");
+                String username = resultSet.getString("username");
+                String discordID = resultSet.getString("discordID");
+                long verifyDate = resultSet.getLong("verifyDate");
+
+                verifyUser verifyUser = new verifyUser(username,discordID,verifyDate);
+
+                verifyHandler.getVerifyUser().put(UUID.fromString(uuid),verifyUser);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void insertIntoDatabaseUser(ProxiedPlayer player)  {
 
         Connection connection;
@@ -89,18 +118,19 @@ public class XSDatabaseHandler {
         try {
             connection = establishConnection();
             PreparedStatement preparedCheckStatement = connection.prepareStatement(checkPlayerQuery);
-            preparedCheckStatement.setString(1, player.getUUID());
+            preparedCheckStatement.setString(1, player.getUniqueId().toString());
             ResultSet resultSet = preparedCheckStatement.executeQuery();
 
             if (resultSet.next()) {
                 boolean exists = resultSet.getBoolean("exist");
                 if(!exists) {
-                    String insetrQuery = "INSERT INTO " + getMainTable() + " (uuid, username, warnPoints) "
-                            + "VALUES(?, ?, ?)";
+                    String insetrQuery = "INSERT INTO " + getMainTable() + " (uuid, username, warnPoints, discordID) "
+                            + "VALUES(?, ?, ?, ?)";
                     PreparedStatement preparedStatement = connection.prepareStatement(insetrQuery);
-                    preparedStatement.setString(1, player.getUUID());
+                    preparedStatement.setString(1, player.getUniqueId().toString());
                     preparedStatement.setString(2, player.getName());
                     preparedStatement.setInt(3, 0);
+                    preparedStatement.setString(4, "");
                     preparedStatement.executeUpdate();
                 }
             }
@@ -133,6 +163,20 @@ public class XSDatabaseHandler {
         result = userId+":"+targetUUID;
 
         return result;
+    }
+
+    public static void updateVerifyUser(String discordID,String uuid)  {
+
+        String updateQuery = "UPDATE " + getMainTable() + " SET discordID = ?, verifyDate = ? WHERE uuid = ?";
+        try (PreparedStatement preparedStatement = establishConnection().prepareStatement(updateQuery)) {
+            preparedStatement.setString(1, discordID);
+            preparedStatement.setLong(2, System.currentTimeMillis());
+            preparedStatement.setString(3, uuid);
+
+            preparedStatement.executeUpdate();
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void updateSCPUsersLogout(String username,long onlinetime,String server)  {
