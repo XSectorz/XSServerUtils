@@ -1,9 +1,13 @@
 package net.xsapi.panat.xsserverutilsbungee.discord.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.discord.verifyHandler;
 import net.xsapi.panat.xsserverutilsbungee.discord.verifyUser;
@@ -39,6 +43,8 @@ public class modalEvent extends ListenerAdapter {
                 return;
             }
 
+            Guild guild = e.getGuild();
+
             verificationEmbed.setTitle("**Siamcraft Verification**");
             verificationEmbed.setColor(Color.GREEN);
             verificationEmbed.setDescription(":white_check_mark: คุณทำการยืนยันตัวตนสำเร็จเรียบร้อยแล้ว");
@@ -49,6 +55,22 @@ public class modalEvent extends ListenerAdapter {
             XSDatabaseHandler.updateVerifyUser(user.getId(),playerUUID);
             verifyUser verifyUser = new verifyUser(playerName,user.getId(),System.currentTimeMillis());
             verifyHandler.getVerifyUser().put(UUID.fromString(playerUUID),verifyUser);
+
+            if(guild != null) {
+                Member member = guild.retrieveMember(user).complete();
+
+                Role role = guild.getRoleById(mainConfig.getConfig().getString("discordVerifyRole"));
+                if(role != null && member != null) {
+                    guild.addRoleToMember(member,role).queue(
+                            success -> {
+                                core.getPlugin().getLogger().info("Added role to : " + user.getId());
+                            },
+                            error -> {
+                                core.getPlugin().getLogger().info("Failed to add role to : " + user.getId());
+                            }
+                    );
+                }
+            }
         }
     }
 }

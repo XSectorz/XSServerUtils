@@ -33,6 +33,8 @@ public class scpWebSocket extends WebSocketClient {
         String action = message.split("<SPLIT>")[0];
         String clientName = message.split("<SPLIT>")[1];
 
+        core.getPlugin().getLogger().info("MSG: " + message);
+
         if(action.equalsIgnoreCase("REGISTER_NEW_2FA")) {
             String hashSecret = message.split("<SPLIT>")[2];
             XSDatabaseHandler.updateSecretSCPUsers(clientName,hashSecret);
@@ -61,9 +63,12 @@ public class scpWebSocket extends WebSocketClient {
             }
         } else if(action.equalsIgnoreCase("LOGIN")) {
             if(XSHandler.getScpUsers().containsKey(clientName)) {
+                core.getPlugin().getLogger().info("Connected " + clientName);
                 XSHandler.getScpUsers().get(clientName).setIsOnline(true);
                 scpUsers scpUsers = XSHandler.getScpUsers().get(clientName);
                 scpUsers.setCurrentTime(System.currentTimeMillis());
+            } else {
+                core.getPlugin().getLogger().info("User " + clientName + " not contain");
             }
         } else if(action.equalsIgnoreCase("CREATE_ACCOUNT")) {
             if(!XSHandler.getScpUsers().containsKey(clientName)) {

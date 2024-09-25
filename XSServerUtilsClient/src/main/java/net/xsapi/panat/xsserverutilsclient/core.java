@@ -28,5 +28,6 @@ public final class core extends JavaPlugin {
     @Override
     public void onDisable() {
         XSRedisHandler.destroyThreads();
+        XSHandler.unregisterPlaceholder();
     }
 }

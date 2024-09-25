@@ -1,8 +1,10 @@
 package net.xsapi.panat.xsserverutilsbungee.handler;
 
 import com.google.gson.Gson;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.xsapi.panat.xsserverutilsbungee.config.botConfig;
 import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
+import net.xsapi.panat.xsserverutilsbungee.core;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSMuteplayers;
 import net.xsapi.panat.xsserverutilsbungee.scp.scpSessions;
@@ -18,9 +20,13 @@ public class XSHandler {
     private static HashMap<String, XSMuteplayers> mutelist = new HashMap<>();
 
     private static HashMap<String, scpUsers> scpUsers = new HashMap<>();
-    public static HashMap<String, scpSessions> scpUserSessions = new HashMap<>();
+    private static HashMap<String, scpSessions> scpUserSessions = new HashMap<>();
+    private static HashMap<String,Integer> onlineListServerGroup = new HashMap<>();
 
 
+    public static HashMap<String,Integer> getOnlineListServerGroup() {
+        return onlineListServerGroup;
+    }
     public static HashMap<String, XSBanplayers> getBanList() {
         return banlist;
     }
@@ -30,6 +36,7 @@ public class XSHandler {
     public static HashMap<String, scpUsers> getScpUsers() {
         return scpUsers;
     }
+
     public static HashMap<String, scpSessions> getScpUserSessions() {
         return scpUserSessions;
     }
@@ -63,6 +70,23 @@ public class XSHandler {
                 getBotData().put(name,targetServer);
             }
 
+        }
+    }
+
+    public static void loadDefaultOnlineGroup() {
+        for(String serverGroup : mainConfig.getConfig().getSection("configuration.serverList").getKeys()) {
+
+            int onlinePlayers = 0;
+            for(String server : mainConfig.getConfig().getStringList("configuration.serverList." + serverGroup)) {
+                ServerInfo serverInfo = core.getPlugin().getProxy().getServerInfo(server);
+
+                if(serverInfo != null) {
+                   // core.getPlugin().getLogger().info("Added " + server + " -> " + serverInfo.getPlayers().size());
+                    onlinePlayers += serverInfo.getPlayers().size();
+                }
+            }
+           // core.getPlugin().getLogger().info("Total Group " + serverGroup + " -> " + onlinePlayers);
+            getOnlineListServerGroup().put(serverGroup,onlinePlayers);
         }
     }
 

@@ -104,6 +104,15 @@ public class XSRedisHandler {
                                     Bukkit.getLogger().info("SCP User " + dataSCP.getKey());
                                 }
 
+                            } else if(args.equalsIgnoreCase("UPDATE_ONLINE")) {
+                                String data = message.split("<SPLIT>")[1];
+                                Gson gson = new Gson();
+
+                                //core.getPlugin().getLogger().info("GET : " + data);
+                                Type type = new TypeToken<HashMap<String,Integer>>(){}.getType();
+                                HashMap<String,Integer> onlineList = gson.fromJson(data,type);
+
+                                XSHandler.setOnlineListServerGroup(onlineList);
                             }
                             //XSRedisHandler.sendRedisMessage(XSRedisHandler.getHostPrefix(),"test ack");
                         }

@@ -11,7 +11,7 @@ public class serverConnectEvent implements Listener {
     @EventHandler
     public void onServerConnect(ServerConnectedEvent e) {
 
-        if(e.getServer().getInfo().getName().equalsIgnoreCase("Lobby-01")) {
+        if(e.getServer().getInfo().getName().equalsIgnoreCase("Lobby/01") || e.getServer().getInfo().getName().equalsIgnoreCase("Lobby/02")) {
             ProxiedPlayer player = e.getPlayer();
             XSDatabaseHandler.insertIntoDatabaseUser(player);
         }

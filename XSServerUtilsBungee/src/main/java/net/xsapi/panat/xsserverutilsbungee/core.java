@@ -1,23 +1,27 @@
 package net.xsapi.panat.xsserverutilsbungee;
 
+import com.google.gson.Gson;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.xsapi.panat.xsserverutilsbungee.commands.commandsLoader;
 import net.xsapi.panat.xsserverutilsbungee.config.configLoader;
+import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.discord.xsbot;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSDatabaseHandler;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
 import net.xsapi.panat.xsserverutilsbungee.handler.XSRedisHandler;
 import net.xsapi.panat.xsserverutilsbungee.listeners.eventLoader;
+import net.xsapi.panat.xsserverutilsbungee.utils.XSUtils;
 import net.xsapi.panat.xsserverutilsbungee.websocket.scpWebSocket;
 import xyz.kyngs.librelogin.api.LibreLoginPlugin;
-//import xyz.kyngs.librelogin.api.provider.LibreLoginProvider;
+import xyz.kyngs.librelogin.api.provider.LibreLoginProvider;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public final class core extends Plugin {
@@ -44,7 +48,7 @@ public final class core extends Plugin {
 
         plugin = this;
 
-        /*
+
         apiLibre = ((LibreLoginProvider<ProxiedPlayer, ServerInfo>) getProxy().getPluginManager().getPlugin("LibreLogin")).getLibreLogin();
         apiLibre.getEventProvider().subscribe(apiLibre.getEventTypes().authenticated, (e) -> {
             //core.getPlugin().getLogger().info("Player "  + e.getPlayer());
@@ -63,7 +67,7 @@ public final class core extends Plugin {
             }
 
         });
-*/
+
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
@@ -95,6 +99,21 @@ public final class core extends Plugin {
         } catch (LoginException e) {
             core.getPlugin().getLogger().info("ERROR: Provided bot token is invalid!");
         }
+
+        getProxy().getScheduler().schedule(this, new Runnable() {
+            @Override
+            public void run() {
+                Gson gson = new Gson();
+                XSHandler.loadDefaultOnlineGroup();
+                String onlineList = gson.toJson(XSHandler.getOnlineListServerGroup());
+                for(String serverGroup : mainConfig.getConfig().getSection("configuration.serverList").getKeys()) {
+                    for(String server : mainConfig.getConfig().getStringList("configuration.serverList." + serverGroup)) {
+                        XSRedisHandler.sendRedisMessage(XSRedisHandler.getClientPrefix() + server,"UPDATE_ONLINE<SPLIT>" + onlineList);
+                    }
+                }
+            }
+        }, 10, 10, TimeUnit.SECONDS);
+
 
 
 
