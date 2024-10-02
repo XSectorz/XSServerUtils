@@ -1,5 +1,7 @@
 package net.xsapi.panat.xsserverutilsbungee.scp;
 
+import net.xsapi.panat.xsserverutilsbungee.core;
+
 public class scpUsers {
 
     private String username;
@@ -31,6 +33,8 @@ public class scpUsers {
     }
 
     public void setIsOnline(boolean isOnline) {
+
+        core.getPlugin().getLogger().info("Online now is" + isOnline);
         this.isOnline = isOnline;
     }
 
@@ -48,10 +52,6 @@ public class scpUsers {
 
     public long getOnlineTime() {
         return onlineTime;
-    }
-
-    public void setOnline(boolean online) {
-        isOnline = online;
     }
 
     public void setServer(String server) {

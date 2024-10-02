@@ -5,7 +5,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.model.user.User;
 import net.xsapi.panat.xsserverutilsbungee.config.messagesConfig;
+import net.xsapi.panat.xsserverutilsbungee.core;
+import net.xsapi.panat.xsserverutilsbungee.handler.XSHandler;
 import net.xsapi.panat.xsserverutilsbungee.objects.XSBanplayers;
+import net.xsapi.panat.xsserverutilsbungee.scp.scpUsers;
 
 import java.util.Date;
 import java.util.Objects;
@@ -50,6 +53,26 @@ public class XSUtils {
             kicedMSG += replaceStr + "\n";
         }
         return kicedMSG;
+    }
+
+    public static void setOnlineStatus(String clientName) {
+        core.getPlugin().getLogger().info("Connected to server " + clientName);
+        core.getPlugin().getLogger().info("Test lien two " + clientName);
+        try {
+            scpUsers scpUsers = XSHandler.getScpUsers().get(clientName);
+            if (scpUsers == null) {
+                core.getPlugin().getLogger().info("Error: scpUsers is null for client " + clientName);
+                return;
+            }
+            scpUsers.setIsOnline(true);
+            scpUsers.setCurrentTime(System.currentTimeMillis());
+            core.getPlugin().getLogger().info("Connected scpUsers name " + scpUsers.getUsername());
+            core.getPlugin().getLogger().info("Connected scpUsers connect " + scpUsers.isOnline());
+        } catch (Exception e) {
+            core.getPlugin().getLogger().severe("Error handling scpUsers: " + e.getMessage());
+            e.printStackTrace();
+        }
+        core.getPlugin().getLogger().info("--------------------------------");
     }
 
     public static String generateSixDigitCode() {

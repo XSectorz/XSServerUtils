@@ -86,14 +86,8 @@ public final class core extends Plugin {
         new commandsLoader();
         new eventLoader();
         XSHandler.initSystem();
-        try {
-            URI uri = new URI("wss://ws.siamcraft.net?client=xsserverutils_bungeecord");
-            scpWebSocket = new scpWebSocket(uri);
-            scpWebSocket.connect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+        connectWebSocket();
         try {
             new xsbot();
         } catch (LoginException e) {
@@ -115,9 +109,28 @@ public final class core extends Plugin {
         }, 10, 10, TimeUnit.SECONDS);
 
 
-
-
     }
+
+    public static void connectWebSocket() {
+        core.getPlugin().getLogger().info("Try Reconnect WSS v2");
+        try {
+
+            if (scpWebSocket != null && scpWebSocket.isOpen()) {
+                core.getPlugin().getLogger().info("Closing previous WebSocket connection...");
+                scpWebSocket.close();
+            }
+
+            scpWebSocket = null;
+
+            URI uri = new URI("wss://ws.siamcraft.net?client=xsserverutils_bungeecord");
+            scpWebSocket = new scpWebSocket(uri);
+            scpWebSocket.connect();
+            core.getPlugin().getLogger().info("Connected successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onDisable() {

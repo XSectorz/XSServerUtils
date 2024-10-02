@@ -2,6 +2,7 @@ package net.xsapi.panat.xsserverutilsbungee.websocket;
 
 import com.google.gson.Gson;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsserverutilsbungee.config.mainConfig;
 import net.xsapi.panat.xsserverutilsbungee.core;
@@ -14,17 +15,20 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 public class scpWebSocket extends WebSocketClient {
 
     public scpWebSocket(URI serverURI) {
         super(serverURI);
+        setConnectionLostTimeout(0);
     }
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         System.out.println("Connected to WebSocket server");
         send("Hello this is from client");
+       //  startPingScheduler();
     }
 
     @Override
@@ -63,10 +67,7 @@ public class scpWebSocket extends WebSocketClient {
             }
         } else if(action.equalsIgnoreCase("LOGIN")) {
             if(XSHandler.getScpUsers().containsKey(clientName)) {
-                core.getPlugin().getLogger().info("Connected " + clientName);
-                XSHandler.getScpUsers().get(clientName).setIsOnline(true);
-                scpUsers scpUsers = XSHandler.getScpUsers().get(clientName);
-                scpUsers.setCurrentTime(System.currentTimeMillis());
+                XSUtils.setOnlineStatus(clientName);
             } else {
                 core.getPlugin().getLogger().info("User " + clientName + " not contain");
             }
@@ -82,9 +83,32 @@ public class scpWebSocket extends WebSocketClient {
         }
     }
 
+    private void startPingScheduler() {
+        ProxyServer.getInstance().getScheduler().schedule(core.getPlugin(), new Runnable() {
+            public void run() {
+                send("PING TO SERVER ");
+            }
+        }, 5, 5, TimeUnit.SECONDS);
+    }
+
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        System.out.println("Disconnected from WebSocket server");
+        System.out.println("Disconnected from WebSocket server reason" + reason);
+        attemptReconnect();
+    }
+
+    private void attemptReconnect() {
+        ProxyServer.getInstance().getScheduler().schedule(core.getPlugin(), new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    core.getPlugin().getLogger().info("Attempting to reconnect WebSocket...");
+                    core.connectWebSocket(); // เรียกฟังก์ชัน connectWebSocket เพื่อเชื่อมต่อใหม่
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 2, TimeUnit.SECONDS); // พยายามเชื่อมต่อใหม่หลังจาก 5 วินาที
     }
 
     @Override

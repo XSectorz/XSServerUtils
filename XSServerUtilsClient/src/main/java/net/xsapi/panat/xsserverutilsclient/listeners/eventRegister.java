@@ -8,6 +8,7 @@ public class eventRegister {
     public eventRegister() {
 
         Bukkit.getPluginManager().registerEvents(new playerChatEvent(), core.getPlugin());
+        Bukkit.getPluginManager().registerEvents(new onProtect(), core.getPlugin());
 
     }
 }
