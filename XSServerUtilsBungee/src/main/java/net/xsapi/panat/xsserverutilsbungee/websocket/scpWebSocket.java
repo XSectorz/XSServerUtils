@@ -21,7 +21,7 @@ public class scpWebSocket extends WebSocketClient {
 
     public scpWebSocket(URI serverURI) {
         super(serverURI);
-        setConnectionLostTimeout(0);
+        setConnectionLostTimeout(320);
     }
 
     @Override
@@ -83,32 +83,10 @@ public class scpWebSocket extends WebSocketClient {
         }
     }
 
-    private void startPingScheduler() {
-        ProxyServer.getInstance().getScheduler().schedule(core.getPlugin(), new Runnable() {
-            public void run() {
-                send("PING TO SERVER ");
-            }
-        }, 5, 5, TimeUnit.SECONDS);
-    }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
         System.out.println("Disconnected from WebSocket server reason" + reason);
-        attemptReconnect();
-    }
-
-    private void attemptReconnect() {
-        ProxyServer.getInstance().getScheduler().schedule(core.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    core.getPlugin().getLogger().info("Attempting to reconnect WebSocket...");
-                    core.connectWebSocket(); // เรียกฟังก์ชัน connectWebSocket เพื่อเชื่อมต่อใหม่
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 2, TimeUnit.SECONDS); // พยายามเชื่อมต่อใหม่หลังจาก 5 วินาที
     }
 
     @Override

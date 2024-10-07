@@ -56,10 +56,11 @@ public final class core extends Plugin {
             ProxiedPlayer p = e.getPlayer();
 
             if(XSHandler.getBotData().containsKey(p.getName())) {
-                ProxyServer.getInstance().getScheduler().schedule(this, new Runnable() {
+                getProxy().getScheduler().schedule(this, new Runnable() {
                     public void run() {
                         if(p != null) {
                             ServerInfo serverInfo = core.getPlugin().getProxy().getServerInfo(XSHandler.getBotData().get(p.getName()));
+                            core.getPlugin().getLogger().info("Send " + p.getName() + " to " + serverInfo.getName());
                             p.connect(serverInfo);
                         }
                     }
@@ -107,6 +108,14 @@ public final class core extends Plugin {
                 }
             }
         }, 10, 10, TimeUnit.SECONDS);
+
+        ProxyServer.getInstance().getScheduler().schedule(core.getPlugin(), new Runnable() {
+            public void run() {
+                System.out.println("Task new session");
+                core.getPlugin().getLogger().info("Attempting to reconnect WebSocket...");
+                core.connectWebSocket();
+            }
+        }, 5, 5, TimeUnit.MINUTES);
 
 
     }
